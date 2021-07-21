@@ -123,6 +123,12 @@ class LabHandler(ExtensionHandlerJinjaMixin, ExtensionHandlerMixin, JupyterHandl
         labextensions_path = app.extra_labextensions_path + app.labextensions_path
         recursive_update(page_config, get_page_config(labextensions_path, settings_dir, logger=self.log))
 
+        # Convert dictionaries to lists to give to the front end
+        for (key, value) in page_config.items():
+
+            if isinstance(value, dict):
+                page_config[key] = [subkey for subkey in value if value[subkey]]
+
         # Write the template with the config.
         tpl = self.render_template('index.html', page_config=page_config)
         self.write(tpl)
